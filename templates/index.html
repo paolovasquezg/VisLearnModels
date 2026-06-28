@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visual Learning Models – MNIST</title>
+  <link rel="stylesheet" href="/views/styles.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+
+  <!-- ═══════════════════════════════ HEADER ═══════════════════════════════════ -->
+  <header>
+    <div class="header-inner">
+      <div>
+        <h1>Visual Learning Models</h1>
+        <p class="subtitle">
+          Exploring learned representations of a Multi-Layer Perceptron trained on
+          <strong>MNIST</strong> (handwritten digits 0–9) &nbsp;·&nbsp;
+          Dimensionality reduction via <strong>t-SNE</strong>
+        </p>
+      </div>
+      <div class="header-badge">
+        <span>DS5343</span>
+        <span>UTEC</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════ T1 SECTION ═══════════════════════════════ -->
+  <section class="viz-section" id="section-t1">
+
+    <div class="section-header">
+      <span class="task-tag">T1</span>
+      <div>
+        <h2>Inter-Epoch Evolution</h2>
+        <p class="section-desc">
+          How does the model's internal representation of digits change as
+          training progresses? Points are <strong>1 000 MNIST test images</strong>
+          projected into 2D via t-SNE using the <em>Layer-4 (64-unit)</em>
+          activations. Color encodes the true digit class.
+          Watch how initially scattered points form tight, well-separated clusters
+          over training epochs.
+        </p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls" id="t1-controls">
+      <button id="t1-play" title="Play / Pause animation">▶ Play</button>
+      <button id="t1-prev" title="Previous epoch">&#9664; Prev</button>
+      <button id="t1-next" title="Next epoch">Next &#9654;</button>
+      <div class="sep"></div>
+      <span class="ctrl-label">Epoch:</span>
+      <div id="t1-epoch-btns" class="btn-group"></div>
+      <div class="sep"></div>
+      <span id="t1-stat" class="stat-badge"></span>
+    </div>
+
+    <!-- Visualization area -->
+    <div id="t1-chart"></div>
+    <div class="below-row">
+      <div class="legend-wrap">
+        <h3>Legend <small>(click to filter)</small></h3>
+        <div id="t1-legend" class="legend legend-h"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════ T2 SECTION ═══════════════════════════════ -->
+  <section class="viz-section" id="section-t2">
+
+    <div class="section-header">
+      <span class="task-tag">T2</span>
+      <div>
+        <h2>Inter-Layer Evolution</h2>
+        <p class="section-desc">
+          How does the same set of images look at different depths of the network?
+          Each panel shows the t-SNE projection of one hidden layer's activations
+          (all at the <em>final epoch</em>). Curved <strong>trails</strong>
+          connect each observation across layers, colored by class — revealing
+          how representations progressively separate into cleaner clusters as
+          information passes forward through the network.
+        </p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls" id="t2-controls">
+      <button id="t2-animate" title="Animate trails layer by layer">&#9654; Animate Trails</button>
+      <button id="t2-reset" title="Reset trail visibility">&#8635; Reset</button>
+      <div class="sep"></div>
+      <span class="ctrl-label">Show trails:</span>
+      <div id="t2-trail-btns" class="btn-group">
+        <button class="trail-btn active" data-opacity="0.04">All (bundled)</button>
+        <button class="trail-btn" data-opacity="0">Hide</button>
+      </div>
+      <div class="sep"></div>
+      <span class="ctrl-label">Filter class:</span>
+      <select id="t2-class-select">
+        <option value="-1">All classes</option>
+      </select>
+    </div>
+
+    <!-- Visualization area -->
+    <div id="t2-chart"></div>
+    <div class="below-row">
+      <div class="legend-wrap">
+        <h3>Legend <small>(click to filter)</small></h3>
+        <div id="t2-legend" class="legend legend-h"></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══════════════════════════════ TOOLTIP ══════════════════════════════════ -->
+  <div id="tooltip" class="tooltip"></div>
+
+  <!-- ═══════════════════════════════ FOOTER ═══════════════════════════════════ -->
+  <footer>
+    DS5343 – Visualización de Datos &nbsp;·&nbsp; UTEC &nbsp;·&nbsp;
+    MLP on MNIST &nbsp;·&nbsp; t-SNE projections &nbsp;·&nbsp; D3 v7
+  </footer>
+
+  <script src="/views/epochs.js"></script>
+  <script src="/views/layers.js"></script>
+</body>
+
+</html>

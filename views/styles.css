@@ -1,0 +1,273 @@
+/* ─── Reset & base ─────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #f0f2f5;
+  --panel:     #ffffff;
+  --panel2:    #f8f9fb;
+  --border:    #dde1e7;
+  --accent:    #2563eb;
+  --accent2:   #7c3aed;
+  --text:      #1a1a2e;
+  --muted:     #64748b;
+  --radius:    10px;
+  --shadow:    0 2px 12px rgba(0,0,0,.08);
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ─── Header ───────────────────────────────────────────────────────────────── */
+header {
+  background: var(--panel);
+  border-bottom: 2px solid var(--accent);
+  padding: 18px 40px;
+}
+.header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .03em;
+}
+.subtitle {
+  font-size: .85rem;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.subtitle strong { color: var(--text); }
+.header-badge {
+  display: flex;
+  gap: 8px;
+}
+.header-badge span {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: .78rem;
+  color: var(--accent2);
+  font-weight: 600;
+}
+
+/* ─── Sections ─────────────────────────────────────────────────────────────── */
+.viz-section {
+  max-width: 1500px;
+  margin: 30px auto;
+  padding: 0 24px;
+}
+
+.section-header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+.task-tag {
+  background: var(--accent);
+  color: var(--bg);
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 4px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+  margin-top: 3px;
+}
+.section-header h2 {
+  font-size: 1.25rem;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.section-desc {
+  font-size: .83rem;
+  color: var(--muted);
+  max-width: 900px;
+}
+.section-desc strong { color: var(--text); }
+.section-desc em { color: var(--accent2); font-style: normal; }
+
+/* ─── Controls bar ─────────────────────────────────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: 14px;
+}
+.sep { width: 1px; height: 24px; background: var(--border); margin: 0 4px; }
+.ctrl-label { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+
+button {
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: .78rem;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  white-space: nowrap;
+}
+button:hover    { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+button.active   { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+.btn-group { display: flex; gap: 4px; }
+
+select {
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: .78rem;
+  cursor: pointer;
+}
+select:focus { outline: none; border-color: var(--accent); }
+
+/* ─── Chart containers ─────────────────────────────────────────────────────── */
+#t1-chart, #t2-chart {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+/* ─── Below-chart row (legend + info) ─────────────────────────────────────── */
+.below-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.legend-wrap h3 {
+  font-size: .85rem;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.legend-wrap h3 small { color: var(--muted); font-weight: 400; }
+
+
+/* ─── Side panel ───────────────────────────────────────────────────────────── */
+.side-panel {
+  flex: 0 0 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.side-panel h3 {
+  font-size: .85rem;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+.side-panel h3 small { color: var(--muted); font-weight: 400; }
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.legend-h {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background .15s, opacity .15s;
+  font-size: .8rem;
+}
+.legend-item:hover       { background: var(--panel2); }
+.legend-item.dimmed      { opacity: .25; }
+.legend-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+
+/* ─── Stat badge ───────────────────────────────────────────────────────────── */
+.stat-badge {
+  font-size: .78rem;
+  color: var(--accent2);
+  font-weight: 600;
+  padding: 4px 10px;
+  background: var(--panel2);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* ─── Tooltip ──────────────────────────────────────────────────────────────── */
+.tooltip {
+  position: fixed;
+  background: rgba(255,255,255,.97);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: .78rem;
+  color: var(--text);
+  pointer-events: none;
+  display: none;
+  z-index: 9999;
+  line-height: 1.7;
+  box-shadow: var(--shadow);
+}
+.tooltip strong { color: var(--accent); }
+
+/* ─── SVG internals ────────────────────────────────────────────────────────── */
+.axis-label {
+  fill: var(--muted);
+  font-size: 11px;
+}
+.epoch-label {
+  fill: var(--accent);
+  font-size: 22px;
+  font-weight: 700;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.layer-label {
+  fill: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.fp-label {
+  fill: var(--muted);
+  font-size: 10px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  letter-spacing: .08em;
+}
+
+/* ─── Footer ───────────────────────────────────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 18px;
+  font-size: .75rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
