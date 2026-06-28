@@ -1,27 +1,15 @@
-/* ============================================================
-   T2 – Inter-Layer Evolution (Trail Bundling)
-   Four mini t-SNE scatterplots (one per hidden layer) arranged
-   horizontally. Cubic-Bézier trails connect each observation
-   across layers; lines are pulled toward their class centroid
-   at each midpoint, creating a natural bundling effect.
-
-   Visualization Mantra:
-     Overview First → all 4 layers + all trails shown on load
-     Zoom / Filter  → legend class filter + class select
-     Details on Demand → hover highlights full trajectory
-   ============================================================ */
 (function () {
 
   /* ── Layout ───────────────────────────────────────────────────────────── */
-  const PM      = { top: 36, right: 16, bottom: 14, left: 16 };
+  const PM = { top: 36, right: 16, bottom: 14, left: 16 };
   const N_LAYERS = 4;
 
-  const t2el   = document.getElementById('t2-chart');
-  const AVAIL  = (t2el.clientWidth || 1100) - PM.left - PM.right;
+  const t2el = document.getElementById('t2-chart');
+  const AVAIL = (t2el.clientWidth || 1100) - PM.left - PM.right;
   // plots take ~62%, gaps take ~38% of available width
-  const PW     = Math.floor(AVAIL * 0.62 / N_LAYERS);
-  const GAP    = Math.floor(AVAIL * 0.38 / (N_LAYERS - 1));
-  const PH     = 300;
+  const PW = Math.floor(AVAIL * 0.62 / N_LAYERS);
+  const GAP = Math.floor(AVAIL * 0.38 / (N_LAYERS - 1));
+  const PH = 300;
 
   const TOTAL_W = N_LAYERS * PW + (N_LAYERS - 1) * GAP;
   const TOTAL_H = PH + PM.top + PM.bottom;
@@ -29,19 +17,19 @@
   const COLOR = d3.scaleOrdinal(d3.schemeTableau10).domain(d3.range(10));
 
   const DEFAULT_TRAIL_OPACITY = 0.045;
-  const HIGHLIGHT_OPACITY     = 0.55;
-  const DIM_OPACITY           = 0.008;
+  const HIGHLIGHT_OPACITY = 0.55;
+  const DIM_OPACITY = 0.008;
 
   /* ── State ────────────────────────────────────────────────────────────── */
   let data, points, layerNames;
-  let activeClass  = null;
+  let activeClass = null;
   let hoveredPoint = null;
   let xScale, yScale;
 
   /* ── SVG ──────────────────────────────────────────────────────────────── */
   const svg = d3.select('#t2-chart')
     .append('svg')
-    .attr('width',  t2el.clientWidth || TOTAL_W + PM.left + PM.right)
+    .attr('width', t2el.clientWidth || TOTAL_W + PM.left + PM.right)
     .attr('height', TOTAL_H);
 
   const root = svg.append('g')
@@ -59,12 +47,12 @@
   function plotX(layerIdx) { return layerIdx * (PW + GAP); }
 
   function svgX(layerIdx, dataX) { return plotX(layerIdx) + xScale(dataX); }
-  function svgY(dataY)            { return yScale(dataY); }
+  function svgY(dataY) { return yScale(dataY); }
 
   /* ── Compute class centroids per layer ────────────────────────────────── */
   function computeCentroids(pts) {
     // centroids[layerIdx][classLabel] = {x, y}
-    const sums  = Array.from({ length: N_LAYERS }, () =>
+    const sums = Array.from({ length: N_LAYERS }, () =>
       Object.fromEntries(d3.range(10).map(c => [c, { sx: 0, sy: 0, n: 0 }]))
     );
     pts.forEach(p =>
@@ -89,20 +77,20 @@
     const p1 = pt.positions[li + 1];
 
     // Source and dest in SVG space
-    const x0 = svgX(li,     p0.x),  y0 = svgY(p0.y);
-    const x1 = svgX(li + 1, p1.x),  y1 = svgY(p1.y);
+    const x0 = svgX(li, p0.x), y0 = svgY(p0.y);
+    const x1 = svgX(li + 1, p1.x), y1 = svgY(p1.y);
 
     // Centroid positions in SVG space (for bundling attraction)
-    const cx0 = svgX(li,     centroids[li][pt.label].x);
+    const cx0 = svgX(li, centroids[li][pt.label].x);
     const cy0 = svgY(centroids[li][pt.label].y);
     const cx1 = svgX(li + 1, centroids[li + 1][pt.label].x);
     const cy1 = svgY(centroids[li + 1][pt.label].y);
 
     // Control points: pulled toward class centroid at each side of the gap
-    const cpx0 = x0  + (cx0 - x0)  * bundleAlpha + (x1 - x0) * 0.33;
-    const cpy0 = y0  + (cy0 - y0)  * bundleAlpha;
-    const cpx1 = x1  + (cx1 - x1)  * bundleAlpha - (x1 - x0) * 0.33;
-    const cpy1 = y1  + (cy1 - y1)  * bundleAlpha;
+    const cpx0 = x0 + (cx0 - x0) * bundleAlpha + (x1 - x0) * 0.33;
+    const cpy0 = y0 + (cy0 - y0) * bundleAlpha;
+    const cpx1 = x1 + (cx1 - x1) * bundleAlpha - (x1 - x0) * 0.33;
+    const cpy1 = y1 + (cy1 - y1) * bundleAlpha;
 
     return `M${x0},${y0} C${cpx0},${cpy0} ${cpx1},${cpy1} ${x1},${y1}`;
   }
@@ -119,12 +107,12 @@
       g.selectAll('path')
         .data(pts)
         .join('path')
-          .attr('class', d => `trail trail-c${d.label} trail-id${d.id}`)
-          .attr('d', d => trailPath(d, li, centroids, 0.45))
-          .attr('fill', 'none')
-          .attr('stroke', d => COLOR(d.label))
-          .attr('stroke-width', 1)
-          .attr('opacity', DEFAULT_TRAIL_OPACITY);
+        .attr('class', d => `trail trail-c${d.label} trail-id${d.id}`)
+        .attr('d', d => trailPath(d, li, centroids, 0.45))
+        .attr('fill', 'none')
+        .attr('stroke', d => COLOR(d.label))
+        .attr('stroke-width', 1)
+        .attr('opacity', DEFAULT_TRAIL_OPACITY);
     }
   }
 
@@ -149,18 +137,6 @@
         .attr('text-anchor', 'middle')
         .text(name);
 
-      // Forward-propagation arrow label (only first gap)
-      if (li === 0) {
-        root.append('text')
-          .attr('class', 'fp-label')
-          .attr('x', ox + PW + GAP / 2)
-          .attr('y', PH / 2)
-          .attr('text-anchor', 'middle')
-          .attr('transform',
-            `rotate(-90, ${ox + PW + GAP / 2}, ${PH / 2})`)
-          .text('FORWARD PROPAGATION →');
-      }
-
       // Dots
       const g = root.append('g').attr('class', `dots layer-${li}`);
       dotGroups.push(g);
@@ -168,14 +144,14 @@
       g.selectAll('circle')
         .data(pts)
         .join('circle')
-          .attr('class', d => `dot dot-c${d.label} dot-id${d.id}`)
-          .attr('cx', d => ox + xScale(d.positions[li].x))
-          .attr('cy', d => yScale(d.positions[li].y))
-          .attr('r', 2.8)
-          .attr('fill', d => COLOR(d.label))
-          .attr('opacity', 0.8)
-          .attr('stroke', '#00000012')
-          .attr('stroke-width', 0.4);
+        .attr('class', d => `dot dot-c${d.label} dot-id${d.id}`)
+        .attr('cx', d => ox + xScale(d.positions[li].x))
+        .attr('cy', d => yScale(d.positions[li].y))
+        .attr('r', 2.8)
+        .attr('fill', d => COLOR(d.label))
+        .attr('opacity', 0.8)
+        .attr('stroke', '#00000012')
+        .attr('stroke-width', 0.4);
     });
   }
 
@@ -224,7 +200,7 @@
         .transition().duration(100)
         .attr('stroke-width', 1)
         .attr('opacity', activeClass === null ? DEFAULT_TRAIL_OPACITY
-              : (pt.label === activeClass ? HIGHLIGHT_OPACITY : DIM_OPACITY));
+          : (pt.label === activeClass ? HIGHLIGHT_OPACITY : DIM_OPACITY));
     });
   }
 
@@ -236,15 +212,13 @@
           tooltip
             .style('display', 'block')
             .style('left', (event.clientX + 14) + 'px')
-            .style('top',  (event.clientY - 28) + 'px')
-            .html(`<strong>Digit ${d.label}</strong><br>
-                   Point&nbsp;ID:&nbsp;${d.id}<br>
-                   Layer:&nbsp;${layerNames[li]}`);
+            .style('top', (event.clientY - 28) + 'px')
+            .html(`<strong>${d.label}</strong><br>`);
         })
         .on('mousemove', function (event) {
           tooltip
             .style('left', (event.clientX + 14) + 'px')
-            .style('top',  (event.clientY - 28) + 'px');
+            .style('top', (event.clientY - 28) + 'px');
         })
         .on('mouseleave', function (_, d) {
           unhighlightPoint(d);
@@ -265,11 +239,11 @@
       g.selectAll('circle')
         .attr('opacity', d =>
           activeClass === null ? 0.8
-          : d.label === activeClass ? 0.9 : 0.08
+            : d.label === activeClass ? 0.9 : 0.08
         )
         .attr('r', d =>
           activeClass === null ? 2.8
-          : d.label === activeClass ? 3.5 : 2
+            : d.label === activeClass ? 3.5 : 2
         );
     });
 
@@ -278,7 +252,7 @@
       g.selectAll('path')
         .attr('opacity', d =>
           activeClass === null ? DEFAULT_TRAIL_OPACITY
-          : d.label === activeClass ? HIGHLIGHT_OPACITY : DIM_OPACITY
+            : d.label === activeClass ? HIGHLIGHT_OPACITY : DIM_OPACITY
         )
         .attr('stroke-width', d =>
           activeClass !== null && d.label === activeClass ? 1.4 : 1
@@ -299,8 +273,8 @@
       g.selectAll('path')
         .attr('opacity', d =>
           op === 0 ? 0
-          : activeClass === null ? op
-          : d.label === activeClass ? HIGHLIGHT_OPACITY : DIM_OPACITY
+            : activeClass === null ? op
+              : d.label === activeClass ? HIGHLIGHT_OPACITY : DIM_OPACITY
         );
     });
   }
@@ -335,14 +309,14 @@
     d3.range(10).forEach(cls => {
       const item = legend.append('div').attr('class', 'legend-item');
       item.append('span').attr('class', 'legend-dot').style('background', COLOR(cls));
-      item.append('span').text(`Digit ${cls}`);
+      item.append('span').text(`${cls}`);
       item.on('click', () => setClassFilter(cls));
     });
 
     // Populate class select
     const sel = d3.select('#t2-class-select');
     d3.range(10).forEach(cls => {
-      sel.append('option').attr('value', cls).text(`Digit ${cls}`);
+      sel.append('option').attr('value', cls).text(`${cls}`);
     });
     sel.on('change', function () {
       const v = +this.value;
@@ -370,8 +344,8 @@
 
   /* ── Initialize ───────────────────────────────────────────────────────── */
   function init(d) {
-    data       = d;
-    points     = d.points;
+    data = d;
+    points = d.points;
     layerNames = d.layers;
 
     buildScales(points);

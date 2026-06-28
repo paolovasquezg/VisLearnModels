@@ -1,11 +1,3 @@
-/* ============================================================
-   T1 – Inter-Epoch Evolution
-   Animated t-SNE scatterplot of Layer-4 activations across
-   training epochs. Implements the Visualization Mantra:
-     Overview First → all 1 000 points visible on load
-     Zoom / Filter  → d3.zoom + legend class filter
-     Details on Demand → hover tooltip per point
-   ============================================================ */
 (function () {
 
   /* ── Layout constants ─────────────────────────────────────────────────── */
@@ -61,9 +53,7 @@
       .style('display', 'block')
       .style('left', (event.clientX + 14) + 'px')
       .style('top', (event.clientY - 28) + 'px')
-      .html(`<strong>Digit ${d.label}</strong><br>
-             Point&nbsp;ID:&nbsp;${d.id}<br>
-             Epoch:&nbsp;${epoch}`);
+      .html(`<strong>${d.label}</strong><br>`);
   }
   function hideTip() { tooltip.style('display', 'none'); }
 
@@ -74,6 +64,15 @@
     xScale = d3.scaleLinear().domain(d3.extent(allX)).range([0, W]).nice();
     yScale = d3.scaleLinear().domain(d3.extent(allY)).range([H, 0]).nice();
   }
+
+  const INSIGHTS = {
+    0: 'Untrained network: all 10 classes are fully mixed, reflecting random weight initialization',
+    1: 'Early separation begins. Some clusters emerge but boundaries remain diffuse',
+    2: 'Rapid convergence: cluster boundaries become clearly visible. Most classes are already distinguishable',
+    5: 'Consolidation: distinct regions form for each digit class. Intra-class variance starts to shrink',
+    10: 'Fine-tuning: clusters tighten further. Outlier points become identifiable on the periphery',
+    20: 'Fully trained: 10 well-separated, compact clusters. Strongly discriminative representations'
+  };
 
   /* ── Update to epoch index ────────────────────────────────────────────── */
   function updateEpoch(idx, animate) {
@@ -88,25 +87,30 @@
     // Watermark
     epochLabel.text(`Epoch ${ep}`);
 
-    // Highlight active epoch button
-    d3.selectAll('#t1-epoch-btns button')
-      .classed('active', (_, i) => i === idx);
+    // Sync slider
+    d3.select('#t1-epoch-slider').property('value', idx);
 
     // Stats badge
     const s = data.stats[ep];
     if (s) {
       const accTxt = `Acc: ${s.acc}%`;
-      const lossTxt = s.loss != null ? `  Loss: ${s.loss}` : '';
+      const lossTxt = s.loss != null ? ` - Loss: ${s.loss}` : '';
       d3.select('#t1-stat').text(accTxt + lossTxt);
     } else {
       d3.select('#t1-stat').text('');
     }
+
+    // Dynamic insight — hide box if no text for this epoch
+    const insight = INSIGHTS[ep] || '';
+    d3.select('#t1-insight')
+      .text(insight)
+      .style('display', insight ? null : 'none');
   }
 
   /* ── Play / pause ─────────────────────────────────────────────────────── */
   function startPlay() {
     playing = true;
-    d3.select('#t1-play').text('⏸ Pause');
+    d3.select('#t1-play').text('⏸');
     playTimer = setInterval(() => {
       const next = (epochIdx + 1) % epochs.length;
       updateEpoch(next, true);
@@ -116,7 +120,7 @@
   function stopPlay() {
     playing = false;
     clearInterval(playTimer);
-    d3.select('#t1-play').text('▶ Play');
+    d3.select('#t1-play').text('▶');
   }
 
   /* ── Class filter ─────────────────────────────────────────────────────── */
@@ -152,20 +156,19 @@
       const item = legend.append('div').attr('class', 'legend-item');
       item.append('span').attr('class', 'legend-dot')
         .style('background', COLOR(cls));
-      item.append('span').text(`Digit ${cls}`);
+      item.append('span').text(`${cls}`);
       item.on('click', () => setClassFilter(cls));
     });
   }
 
-  /* ── Epoch buttons ────────────────────────────────────────────────────── */
-  function buildEpochButtons() {
-    const container = d3.select('#t1-epoch-btns');
-    epochs.forEach((ep, i) => {
-      container.append('button')
-        .text(ep)
-        .classed('active', i === 0)
-        .on('click', () => { stopPlay(); updateEpoch(i, true); });
-    });
+  /* ── Epoch slider ─────────────────────────────────────────────────────── */
+  function buildEpochSlider() {
+    d3.select('#t1-epoch-slider')
+      .attr('max', epochs.length - 1)
+      .on('input', function () {
+        stopPlay();
+        updateEpoch(+this.value, true);
+      });
   }
 
   /* ── Wire global controls ─────────────────────────────────────────────── */
@@ -231,12 +234,13 @@
         setClassFilter(d.label);
       });
 
-    // Initial epoch label
+    // Initial epoch label + insight
     epochLabel.text('Epoch 0');
     d3.select('#t1-stat').text(`Acc: ${data.stats['0'].acc}%`);
+    d3.select('#t1-insight').text(INSIGHTS[0]);
 
     buildLegend();
-    buildEpochButtons();
+    buildEpochSlider();
     wireControls();
   }
 

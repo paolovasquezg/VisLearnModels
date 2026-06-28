@@ -262,6 +262,19 @@ select:focus { outline: none; border-color: var(--accent); }
   letter-spacing: .08em;
 }
 
+/* ─── Insight text ─────────────────────────────────────────────────────────── */
+.insight-text {
+  font-size: .8rem;
+  color: var(--muted);
+  margin-top: 8px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent);
+  background: var(--panel);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  line-height: 1.6;
+}
+
+
 /* ─── Footer ───────────────────────────────────────────────────────────────── */
 footer {
   text-align: center;
