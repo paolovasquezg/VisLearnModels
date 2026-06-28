@@ -1,2 +1,1 @@
-# VisLearnModels
-Visual Learning Models
+# Visual Learning Models
